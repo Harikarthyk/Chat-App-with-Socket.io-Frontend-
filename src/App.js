@@ -7,6 +7,7 @@ import "./App.css";
 import Footer from "./components/Footer/Footer";
 import Login from "./components/Login/Login";
 import Register from "./components/Login/Register";
+import ChatRooms from "./components/ChatRooms/ChatRooms";
 
 function App() {
 	let initalUser = () => JSON.parse(localStorage.getItem("@chat_app_23-12"));
@@ -26,6 +27,7 @@ function App() {
 					<Route exact path='/' component={Home} />
 					<Route exact path='/login' component={Login} />
 					<Route exact path='/register' component={Register} />
+					<Route exact path='/ChatRooms' component={ChatRooms} />
 				</Switch>
 				<Footer />
 			</context.Provider>

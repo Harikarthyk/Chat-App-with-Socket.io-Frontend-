@@ -14,10 +14,7 @@
 
 	margin: 15px 25px;
 }
-a.Navbar__option {
-	color: white;
-	text-decoration: none;
-}
+
 form.Login__left {
 	box-shadow: 1px 1px 1px 1px #e2e2e2;
 	border: 1px solid #c5c2c2;

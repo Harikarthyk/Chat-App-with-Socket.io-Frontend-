@@ -1,8 +1,24 @@
-import React from "react";
+import React, {useContext} from "react";
 import {Link} from "react-router-dom";
+import context from "../context/context";
+import {FaSignOutAlt} from "react-icons/fa";
 import "./Navbar.css";
+import {logout} from "../helper/user";
 
 function Navbar() {
+	const {user, setUser} = useContext(context);
+	const handleLogoutHandler = () => {
+		logout()
+			.then((result) => {
+				console.log(result);
+				if (result.error) {
+					return;
+				}
+				setUser(null);
+				localStorage.setItem("@chat_app_23-12", JSON.stringify(null));
+			})
+			.catch((error) => console.error(error));
+	};
 	return (
 		<div className='Navbar'>
 			<Link to='/'>
@@ -19,6 +35,13 @@ function Navbar() {
 				<Link to='/safety' className='Navbar__option'>
 					Safety
 				</Link>
+				{user ? (
+					<div onClick={handleLogoutHandler} className='Navbar__option'>
+						Logout <FaSignOutAlt style={{margin: "0px 3px"}} />
+					</div>
+				) : (
+					""
+				)}
 			</div>
 		</div>
 	);

@@ -25,3 +25,14 @@ export const login = (input) => {
 		.then((res) => res.json())
 		.catch((error) => console.error(error));
 };
+
+export const logout = () => {
+	if (typeof window !== undefined) {
+		localStorage.removeItem("@chat_app_23-12");
+		return fetch(`${endpoint}/logout`, {
+			method: "GET",
+		})
+			.then((res) => res.json())
+			.catch((error) => console.log(error));
+	}
+};

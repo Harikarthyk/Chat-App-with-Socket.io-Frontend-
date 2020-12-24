@@ -12,7 +12,16 @@
 
 .Navbar__options {
 	display: flex;
-	width: 215px;
+	width: 270px;
 	font-weight: lighter;
 	justify-content: space-evenly;
+}
+.Navbar__option {
+	color: white;
+	cursor: pointer;
+	text-decoration: none;
+	color: white;
+	display: flex;
+	text-decoration: none;
+	align-items: center;
 }
