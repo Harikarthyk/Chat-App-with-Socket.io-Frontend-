@@ -100,3 +100,30 @@ button.ChatRooms__right__input__button {
 	justify-content: center;
 	cursor: pointer;
 }
+.ChatRooms__model__title {
+	text-align: center;
+	margin: 20px;
+	font-weight: bold;
+}
+
+input.ChatRooms__model__input {
+	width: 100%;
+	border-radius: 5px;
+	padding: 6px 5px;
+	margin: 10px 0;
+}
+.ChatRooms__model {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+button.ChatRooms__model__button {
+	width: fit-content;
+	padding: 5px 15px;
+	border-radius: 6px;
+	border: none;
+	background: #30323d;
+	color: white;
+	font-weight: bolder;
+}
