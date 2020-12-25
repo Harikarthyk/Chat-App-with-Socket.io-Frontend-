@@ -28,3 +28,17 @@ export const allRooms = (token, userId) => {
 		.then((result) => result.json())
 		.catch((error) => console.error(error));
 };
+
+//Find the chat room
+export const getChatRoomById = (chatId, token, userId) => {
+	return fetch(`${endpoint}/room/${chatId}/${userId}`, {
+		method: "GET",
+		headers: {
+			Accept: "application/json",
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+	})
+		.then((result) => result.json())
+		.catch((error) => console.error(error));
+};

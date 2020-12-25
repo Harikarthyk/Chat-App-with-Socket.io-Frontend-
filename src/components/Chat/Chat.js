@@ -5,11 +5,13 @@ import {Link, Redirect, useHistory} from "react-router-dom";
 import {FaHome, FaArrowRight} from "react-icons/fa";
 
 function Chat() {
-	const {user, socket, setRoom} = useContext(context);
+	const {user, socket, room, setRoom} = useContext(context);
 	const history = useHistory();
+	const [message, setMessage] = useState("");
+
 	const [roomName, setRoomName] = useState("");
 
-	const [messages, setMessages] = useState([]);
+	const [messageList, setMessageList] = useState([]);
 
 	useEffect(() => {
 		let temp = history.location.pathname.split("/");
@@ -19,10 +21,31 @@ function Chat() {
 		// eslint-disable-next-line
 	}, [history, socket]);
 
-	const [message, setMessage] = useState("");
-	// const handleMessageListener = () => {
+	useEffect(() => {
+		if (socket)
+			socket.on("receive_message", (data) => {
+				console.log(data);
+				setMessageList([...messageList, data]);
+			});
+		console.log(messageList);
+	});
 
-	// }
+	const sendMessage = () => {
+		let messageContent = {
+			chatroom: room,
+			content: {
+				user_id: user.user._id,
+				user_name: user.user.name,
+				message: message,
+				date: new Date(),
+			},
+		};
+
+		socket.emit("send_message", messageContent);
+		setMessageList([...messageList, messageContent.content]);
+		setMessage("");
+	};
+
 	if (!user) return <Redirect to='/' />;
 	return (
 		<div className='Chat'>
@@ -39,14 +62,23 @@ function Chat() {
 			<div className='Chat__title'>
 				Discord Name <b>{roomName}</b>
 			</div>
+			<div className='Chat__code'>
+				Invite Code <b>{room}</b>
+			</div>
 			<div className='Chat__messages'>
-				<div className='Chat__messages__message'>
-					<div className='Chat__messages__message__username'>Hari</div>
-					<div className='Chat__message__message__msg'>Hey How are you</div>
-					<div className='Chat__message__message__date'>
-						12 - 02 - 2000 9:12pm
-					</div>
-				</div>
+				{messageList.map((m, index) => {
+					return (
+						<div className='Chat__messages__message' key={index}>
+							<div className='Chat__messages__message__username'>
+								{m.user_name}
+							</div>
+							<div className='Chat__message__message__msg'>{m.message}</div>
+							<div className='Chat__message__message__date'>
+								{JSON.stringify(m.date)}
+							</div>
+						</div>
+					);
+				})}
 			</div>
 			<div className='Chat__input'>
 				<input
@@ -56,7 +88,7 @@ function Chat() {
 					type='text'
 					placeholder='Type a message'
 				/>
-				<button className='Chat__input__button'>
+				<button onClick={sendMessage} className='Chat__input__button'>
 					<FaArrowRight />
 				</button>
 			</div>

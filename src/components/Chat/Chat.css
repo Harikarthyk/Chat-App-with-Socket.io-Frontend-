@@ -80,3 +80,9 @@ a.Chat__back {
 	font-weight: bolder;
 	cursor: pointer;
 }
+.Chat__code {
+	text-align: -webkit-right;
+	margin: 20px 0;
+	margin-right: 18px;
+	font-size: 12px;
+}

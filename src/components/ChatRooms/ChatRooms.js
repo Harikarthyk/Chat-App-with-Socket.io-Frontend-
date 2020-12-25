@@ -4,11 +4,11 @@ import {Link, Redirect, useHistory} from "react-router-dom";
 import context from "../../context/context";
 import Modal, {closeStyle} from "simple-react-modal";
 import "./ChatRooms.css";
-import {createChatRoom, allRooms} from "../../helper/chatroom";
+import {createChatRoom, allRooms, getChatRoomById} from "../../helper/chatroom";
 import Error from "../Error/Error";
 
 function ChatRooms() {
-	const {user, setRoom} = useContext(context);
+	const {user, setRoom, socket} = useContext(context);
 	const [input, setIntput] = useState({
 		chatRoom: "",
 	});
@@ -38,13 +38,27 @@ function ChatRooms() {
 				}
 				setShowCreateModel(false);
 				setRoom(chatRoom);
+				while (socket == null);
+				socket.emit("join_room", chatRoom);
 				setOutput({...output, message: "Created new Discord", error: false});
 			})
 			.catch((error) => console.error(error));
 	};
 
 	const handleJoinListener = () => {
-		//
+		getChatRoomById(chatRoom, user.token, user.user._id)
+			.then((result) => {
+				if (result.error) {
+					setOutput({...output, message: result.error, error: true});
+					console.log(result);
+					return;
+				}
+				console.log(result);
+				setRoom(chatRoom);
+				socket.emit("join_room", chatRoom);
+				history.push(`/room/${result.room.roomName}/${chatRoom}`);
+			})
+			.catch((error) => console.error(error));
 	};
 
 	useEffect(() => {
