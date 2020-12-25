@@ -14,3 +14,17 @@ export const createChatRoom = (input, token, userId) => {
 		.then((result) => result.json())
 		.catch((error) => console.error(error));
 };
+
+//Getting all Chat Rooms ADMIN by userID
+export const allRooms = (token, userId) => {
+	return fetch(`${endpoint}/all/rooms/${userId}`, {
+		method: "GET",
+		headers: {
+			Accept: "application/json",
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+	})
+		.then((result) => result.json())
+		.catch((error) => console.error(error));
+};
