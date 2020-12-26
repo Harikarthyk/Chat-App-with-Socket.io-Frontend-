@@ -1,17 +1,19 @@
 import React, {useContext, useEffect, useState} from "react";
 import {FaPlus} from "react-icons/fa";
-import {Link, Redirect, useHistory} from "react-router-dom";
+import {Redirect, useHistory} from "react-router-dom";
 import context from "../../context/context";
 import Modal, {closeStyle} from "simple-react-modal";
 import "./ChatRooms.css";
 import {createChatRoom, allRooms, getChatRoomById} from "../../helper/chatroom";
 import Error from "../Error/Error";
+import shortid from "shortid";
 
 function ChatRooms() {
 	const {user, setRoom, socket} = useContext(context);
 	const [input, setIntput] = useState({
 		chatRoom: "",
 	});
+
 	const {chatRoom} = input;
 
 	const [rooms, setRooms] = useState([]);
@@ -26,8 +28,11 @@ function ChatRooms() {
 	const [showJoinModel, setShowJoinModel] = useState(false);
 
 	const handleChatNameListener = () => {
+		let newId = shortid.generate();
+		console.log(newId);
 		createChatRoom(
 			{roomName: chatRoom, allUsers: [{user: user.user._id}]},
+
 			user.token,
 			user.user._id,
 		)
@@ -38,9 +43,10 @@ function ChatRooms() {
 				}
 				setShowCreateModel(false);
 				setRoom(chatRoom);
-				while (socket == null);
+				while (socket === null);
 				socket.emit("join_room", chatRoom);
 				setOutput({...output, message: "Created new Discord", error: false});
+				history.push(`/room/${chatRoom}/${newId}`);
 			})
 			.catch((error) => console.error(error));
 	};
@@ -66,7 +72,6 @@ function ChatRooms() {
 			if (result.error) {
 				return;
 			}
-			console.log(result);
 			setRooms(result.rooms);
 		});
 	}, [user, history, output]);
@@ -76,17 +81,20 @@ function ChatRooms() {
 	return (
 		<>
 			<div className='ChatRooms'>
-				<div className='ChatRooms__preTitle'>Your Discord's</div>
+				<div className='ChatRooms__preTitle'>Discord's you created </div>
 				<div className='ChatRooms_AllChatRooms'>
 					{rooms.map((chat_room) => {
 						return (
-							<Link
-								to={`/room/${chat_room.roomName}/${chat_room._id}`}
+							<div
+								onClick={() => {
+									setIntput({...input, chatRoom: chat_room._id});
+									handleJoinListener();
+								}}
 								key={chat_room._id}
 								className='ChatRooms__AllChatRooms__rooms'
 							>
 								{chat_room.roomName}
-							</Link>
+							</div>
 						);
 					})}
 				</div>

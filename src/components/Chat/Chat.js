@@ -2,12 +2,14 @@ import "./Chat.css";
 import React, {useContext, useEffect, useState} from "react";
 import context from "../../context/context";
 import {Link, Redirect, useHistory} from "react-router-dom";
-import {FaHome, FaArrowRight} from "react-icons/fa";
+import {FaHome, FaArrowRight, FaCopy} from "react-icons/fa";
 
 function Chat() {
 	const {user, socket, room, setRoom} = useContext(context);
 	const history = useHistory();
+	const [showCopied, setShowCopied] = useState(false);
 	const [message, setMessage] = useState("");
+	const [userColor, setUserColor] = useState("");
 
 	const [roomName, setRoomName] = useState("");
 
@@ -27,17 +29,18 @@ function Chat() {
 				console.log(data);
 				setMessageList([...messageList, data]);
 			});
-		console.log(messageList);
 	});
 
 	const sendMessage = () => {
+		var d = new Date();
+
 		let messageContent = {
 			chatroom: room,
 			content: {
 				user_id: user.user._id,
 				user_name: user.user.name,
 				message: message,
-				date: new Date(),
+				date: `${d.getHours()} : ${d.getMinutes()} `,
 			},
 		};
 
@@ -45,7 +48,17 @@ function Chat() {
 		setMessageList([...messageList, messageContent.content]);
 		setMessage("");
 	};
-
+	useEffect(() => {
+		var color = "";
+		while (color !== "#f9f9f9") {
+			color = "#";
+			var letters = "0123456789ABCDEF";
+			for (var i = 0; i < 6; i++) {
+				color += letters[Math.floor(Math.random() * 16)];
+			}
+		}
+		setUserColor(color);
+	}, []);
 	if (!user) return <Redirect to='/' />;
 	return (
 		<div className='Chat'>
@@ -63,19 +76,33 @@ function Chat() {
 				Discord Name <b>{roomName}</b>
 			</div>
 			<div className='Chat__code'>
-				Invite Code <b>{room}</b>
+				Invite Code : <b>{room}</b>{" "}
+				<FaCopy
+					onClick={() => {
+						var textField = document.createElement("textarea");
+						textField.innerText = room;
+						document.body.appendChild(textField);
+						textField.select();
+						document.execCommand("copy");
+						textField.remove();
+						setShowCopied(true);
+					}}
+					style={{marginLeft: "10px", cursor: "pointer"}}
+				/>
+				{showCopied ? <div className='Chat__code__copied'>copied </div> : ""}
 			</div>
 			<div className='Chat__messages'>
 				{messageList.map((m, index) => {
 					return (
 						<div className='Chat__messages__message' key={index}>
-							<div className='Chat__messages__message__username'>
+							<div
+								style={{color: userColor}}
+								className='Chat__messages__message__username'
+							>
 								{m.user_name}
 							</div>
 							<div className='Chat__message__message__msg'>{m.message}</div>
-							<div className='Chat__message__message__date'>
-								{JSON.stringify(m.date)}
-							</div>
+							<div className='Chat__message__message__date'>{m.date}</div>
 						</div>
 					);
 				})}

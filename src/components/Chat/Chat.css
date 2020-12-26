@@ -5,7 +5,7 @@
 
 .Chat__title {
 	text-align: center;
-	padding: 20px 0;
+	padding: 8px 0;
 	font-size: 18px;
 }
 
@@ -15,7 +15,7 @@
 	width: 80%;
 	margin: auto;
 	padding: 20px;
-	overflow: scroll;
+	overflow: auto;
 	border-radius: 5px;
 }
 
@@ -68,7 +68,7 @@ button.Chat__input__button {
 	cursor: pointer;
 }
 a.Chat__back {
-	padding: 10px 20px;
+	padding: 10px 10px;
 	display: flex;
 	align-items: center;
 	width: fit-content;
@@ -78,11 +78,27 @@ a.Chat__back {
 	text-decoration: none;
 	color: white;
 	font-weight: bolder;
+	font-size: 12px;
 	cursor: pointer;
 }
 .Chat__code {
 	text-align: -webkit-right;
-	margin: 20px 0;
+	margin: 10px 0;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
 	margin-right: 18px;
 	font-size: 12px;
+}
+b {
+	background: #30323d;
+	padding: 2px 10px;
+	color: white;
+	border-radius: 4px;
+}
+.Chat__code__copied {
+	margin-left: 10px;
+	/* font-style: italic; */
+	font-weight: 100;
+	color: #d51010;
 }
