@@ -1,22 +1,21 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useState} from "react";
 import {FaPlus} from "react-icons/fa";
 import {Redirect, useHistory} from "react-router-dom";
 import context from "../../context/context";
 import Modal, {closeStyle} from "simple-react-modal";
 import "./ChatRooms.css";
-import {createChatRoom, allRooms, getChatRoomById} from "../../helper/chatroom";
 import Error from "../Error/Error";
 import shortid from "shortid";
 
 function ChatRooms() {
 	const {user, setRoom, socket} = useContext(context);
+
 	const [input, setIntput] = useState({
 		chatRoom: "",
 	});
 
 	const {chatRoom} = input;
 
-	const [rooms, setRooms] = useState([]);
 	const [output, setOutput] = useState({
 		error: false,
 		message: "",
@@ -30,74 +29,49 @@ function ChatRooms() {
 	const handleChatNameListener = () => {
 		let newId = shortid.generate();
 		console.log(newId);
-		createChatRoom(
-			{roomName: chatRoom, allUsers: [{user: user.user._id}]},
-
-			user.token,
-			user.user._id,
-		)
-			.then((result) => {
-				if (result.error) {
-					setOutput({...output, message: result.error, error: true});
-					return;
-				}
-				setShowCreateModel(false);
-				setRoom(chatRoom);
-				while (socket === null);
-				socket.emit("join_room", chatRoom);
-				setOutput({...output, message: "Created new Discord", error: false});
-				history.push(`/room/${chatRoom}/${newId}`);
-			})
-			.catch((error) => console.error(error));
+		setRoom(newId);
+		if (socket === null) {
+			setOutput({...output, message: "Try again in few seconds", error: true});
+			return;
+		}
+		setShowCreateModel(false);
+		setOutput({...output, message: "Done", error: false});
+		socket.emit("create_room", {roomName: chatRoom, roomId: newId});
+		history.push(`/room/${chatRoom}/${newId}`);
 	};
-
 	const handleJoinListener = () => {
-		getChatRoomById(chatRoom, user.token, user.user._id)
-			.then((result) => {
-				if (result.error) {
-					setOutput({...output, message: result.error, error: true});
-					console.log(result);
-					return;
-				}
-				console.log(result);
-				setRoom(chatRoom);
-				socket.emit("join_room", chatRoom);
-				history.push(`/room/${result.room.roomName}/${chatRoom}`);
-			})
-			.catch((error) => console.error(error));
-	};
+		setRoom(chatRoom);
+		if (socket === null) {
+			setOutput({...output, message: "Try again in few seconds", error: true});
+			return;
+		}
+		socket.emit("join_room", chatRoom);
+		socket.on("error_message", (data) => {
+			console.log(data);
+			if (data.error) {
+				setOutput({
+					...output,
+					message: "Error in finding the room",
+					error: false,
+				});
 
-	useEffect(() => {
-		allRooms(user.token, user.user._id).then((result) => {
-			if (result.error) {
 				return;
 			}
-			setRooms(result.rooms);
+
+			if (data.data) {
+				history.push(`/room/${data.data}/${chatRoom}`);
+			}
+			return;
 		});
-	}, [user, history, output]);
+		// if(socket)
+		// setRoom(chatRoom);
+	};
 
 	if (!user) return <Redirect to='/' />;
 
 	return (
 		<>
 			<div className='ChatRooms'>
-				<div className='ChatRooms__preTitle'>Discord's you created </div>
-				<div className='ChatRooms_AllChatRooms'>
-					{rooms.map((chat_room) => {
-						return (
-							<div
-								onClick={() => {
-									setIntput({...input, chatRoom: chat_room._id});
-									handleJoinListener();
-								}}
-								key={chat_room._id}
-								className='ChatRooms__AllChatRooms__rooms'
-							>
-								{chat_room.roomName}
-							</div>
-						);
-					})}
-				</div>
 				<div className='ChatRooms__createButton'>
 					<button
 						onClick={() => setShowCreateModel(true)}

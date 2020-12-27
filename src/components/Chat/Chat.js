@@ -9,7 +9,6 @@ function Chat() {
 	const history = useHistory();
 	const [showCopied, setShowCopied] = useState(false);
 	const [message, setMessage] = useState("");
-	const [userColor, setUserColor] = useState("");
 
 	const [roomName, setRoomName] = useState("");
 
@@ -19,7 +18,7 @@ function Chat() {
 		let temp = history.location.pathname.split("/");
 		setRoomName(temp[2]);
 		setRoom(temp[3]);
-
+		console.log(temp);
 		// eslint-disable-next-line
 	}, [history, socket]);
 
@@ -29,6 +28,17 @@ function Chat() {
 				console.log(data);
 				setMessageList([...messageList, data]);
 			});
+		socket.on("disconnect", () => {
+			console.log("User disconnected");
+		});
+	});
+
+	useEffect(() => {
+		if (socket) {
+			socket.on("in_user", (data) => {
+				setMessageList([...messageList, {info: data}]);
+			});
+		}
 	});
 
 	const sendMessage = () => {
@@ -48,17 +58,6 @@ function Chat() {
 		setMessageList([...messageList, messageContent.content]);
 		setMessage("");
 	};
-	useEffect(() => {
-		var color = "";
-		while (color !== "#f9f9f9") {
-			color = "#";
-			var letters = "0123456789ABCDEF";
-			for (var i = 0; i < 6; i++) {
-				color += letters[Math.floor(Math.random() * 16)];
-			}
-		}
-		setUserColor(color);
-	}, []);
 	if (!user) return <Redirect to='/' />;
 	return (
 		<div className='Chat'>
@@ -94,16 +93,23 @@ function Chat() {
 			<div className='Chat__messages'>
 				{messageList.map((m, index) => {
 					return (
-						<div className='Chat__messages__message' key={index}>
-							<div
-								style={{color: userColor}}
-								className='Chat__messages__message__username'
-							>
-								{m.user_name}
-							</div>
-							<div className='Chat__message__message__msg'>{m.message}</div>
-							<div className='Chat__message__message__date'>{m.date}</div>
-						</div>
+						<React.Fragment key={index}>
+							{/* {console.log(m)} */}
+							{m.info ? (
+								<div className='Chat__messages__info'> {m.info}</div>
+							) : (
+								<div className='Chat__messages__message' key={index}>
+									<div
+										style={{color: m.color}}
+										className='Chat__messages__message__username'
+									>
+										{m.user_name === user.user.name ? "You" : m.user_name}
+									</div>
+									<div className='Chat__message__message__msg'>{m.message}</div>
+									<div className='Chat__message__message__date'>{m.date}</div>
+								</div>
+							)}
+						</React.Fragment>
 					);
 				})}
 			</div>

@@ -29,12 +29,6 @@ function Navbar() {
 				/>
 			</Link>
 			<div className='Navbar__options'>
-				<Link to='/about' className='Navbar__option'>
-					About
-				</Link>
-				<Link to='/safety' className='Navbar__option'>
-					Safety
-				</Link>
 				{user ? (
 					<div onClick={handleLogoutHandler} className='Navbar__option'>
 						Logout <FaSignOutAlt style={{margin: "0px 3px"}} />

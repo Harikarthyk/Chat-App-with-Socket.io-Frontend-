@@ -20,11 +20,19 @@ function App() {
 	const [socket, setSocket] = useState(null);
 	const [room, setRoom] = useState("");
 	useEffect(() => {
-		if (user && user.user && user.user._id && room)
+		var color = "";
+		color = "#";
+		var letters = "0123456789ABCDEF";
+		for (var i = 0; i < 6; i++) {
+			color += letters[Math.floor(Math.random() * 16)];
+		}
+		if (user && user.user && user.user._id)
 			setSocket(
 				io(CONNECTION_PORT, {
 					query: {
 						userId: user.user._id,
+						color: color,
+						userName: user.user.name,
 					},
 				}),
 			);
@@ -35,7 +43,7 @@ function App() {
 				  })
 				: "";
 		//eslint-disable-next-line
-	}, [CONNECTION_PORT, room]);
+	}, [CONNECTION_PORT]);
 	useEffect(() => {
 		let userExists = JSON.parse(localStorage.getItem("@chat_app_23-12"));
 		if (userExists && userExists.user) setUser(userExists);
