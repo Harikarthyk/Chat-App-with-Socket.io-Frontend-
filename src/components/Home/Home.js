@@ -13,8 +13,8 @@ function Home() {
 			<div className='Home__title'>Your place to talk</div>
 			<div className='Home__content'>
 				Temporary Discord where you can create a short-term community for
-				instance purpose where you can text messages , share images. Create your
-				account and start your own Discord.
+				instance purpose where you can text messages . Create your account and
+				start your own Discord.
 			</div>
 			<div className='Home__buttons'>
 				<Link to='/login' className='Home__button'>
