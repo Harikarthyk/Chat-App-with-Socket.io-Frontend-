@@ -18,7 +18,7 @@ function Home() {
 			</div>
 			<div className='Home__buttons'>
 				<Link to='/login' className='Home__button'>
-					Login
+					Login	
 				</Link>
 				<Link to='/register' className='Home__button'>
 					New User

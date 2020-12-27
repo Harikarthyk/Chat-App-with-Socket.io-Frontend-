@@ -11,7 +11,7 @@ import ChatRooms from "./components/ChatRooms/ChatRooms";
 import Chat from "./components/Chat/Chat";
 import io from "socket.io-client";
 
-const CONNECTION_PORT = "http://localhost:5050/";
+const CONNECTION_PORT = "https://chat-app--api.herokuapp.com/";
 
 function App() {
 	let initalUser = () => JSON.parse(localStorage.getItem("@chat_app_23-12"));

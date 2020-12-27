@@ -1,2 +1,2 @@
-const endpoint = "http://localhost:5050/api";
+const endpoint = "https://chat-app--api.herokuapp.com/api";
 export default endpoint;
